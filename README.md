@@ -145,3 +145,28 @@ Backend API: http://kca-demo.jozefcvik.com/data
 - MongoDB (StatefulSet)
 - Nginx (frontend)
 - Persistent Volumes & Secrets
+
+---
+
+### 🧩 Use Cases
+
+- Demo Kubernetes Helm apps
+- Learning StatefulSets and Secrets
+- Deploying a full-stack Node.js app on K8s
+- Testing persistent storage and ConfigMap usage
+
+---
+
+### 📖 References
+
+- [Kubernetes Documentation](https://kubernetes.io/docs/home/)
+- [Helm Charts](https://helm.sh/docs/)
+- [MongoDB on Kubernetes](https://www.mongodb.com/docs/kubernetes/current/)
+- [NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/)
+
+---
+
+### 📝 License
+
+MIT License
+
