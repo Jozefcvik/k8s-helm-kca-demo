@@ -1,0 +1,4 @@
+apiVersion: v2
+name: kca-demo
+description: Full StatefulSet Mongo demo with initContainer
+version: 0.1.0

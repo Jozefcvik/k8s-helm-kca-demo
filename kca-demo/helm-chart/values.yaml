@@ -1,0 +1,13 @@
+namespace: kca-demo
+
+backend:
+  image: jozefcvik/kca-backend:2.0
+
+mongo:
+  username: ...
+  password: ...
+  database: ...
+
+storage:
+  path: /data/mongodb
+  size: 1Gi

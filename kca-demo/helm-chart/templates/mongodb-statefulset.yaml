@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: {{ .Values.namespace }}
+spec:
+  clusterIP: None
+  selector:
+    app: mongodb
+  ports:
+    - port: 27017
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-init-script
+  namespace: {{ .Values.namespace }}
+data:
+  init.js: |
+    db = db.getSiblingDB(process.env.MONGO_INITDB_DATABASE);
+
+    if (db.data.countDocuments() === 0) {
+      db.data.insertMany([
+        {col1:"1",col2:"A",col3:"X",col4:"Red",col5:"100"},
+        {col1:"2",col2:"B",col3:"Y",col4:"Blue",col5:"200"},
+        {col1:"3",col2:"C",col3:"Z",col4:"Green",col5:"300"},
+        {col1:"4",col2:"D",col3:"Q",col4:"Yellow",col5:"400"},
+        {col1:"5",col2:"E",col3:"W",col4:"Black",col5:"500"},
+        {col1:"6",col2:"F",col3:"R",col4:"White",col5:"600"},
+        {col1:"7",col2:"G",col3:"T",col4:"Pink",col5:"700"},
+        {col1:"8",col2:"H",col3:"U",col4:"Orange",col5:"800"}
+      ]);
+    }
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+  namespace: {{ .Values.namespace }}
+spec:
+  serviceName: mongodb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:6
+        ports:
+        - containerPort: 27017
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGO_USER
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGO_PASSWORD
+        - name: MONGO_INITDB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGO_DB
+        volumeMounts:
+        - name: mongo-storage
+          mountPath: /data/db
+        - name: mongo-init
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: mongo-storage
+        persistentVolumeClaim:
+          claimName: mongodb-pvc
+      - name: mongo-init
+        configMap:
+          name: mongo-init-script
